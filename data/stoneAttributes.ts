@@ -11,7 +11,7 @@ export const stoneAttributes = {
     {
       key: "quantity",
       label: "Quantity",
-      type: "number",
+      type: "text",
       placeholder: "1",
       validation: "integer",
       required: true,
@@ -27,7 +27,7 @@ export const stoneAttributes = {
     {
       key: "carat",
       label: "Carat",
-      type: "number",
+      type: "text",
       placeholder: "1.0",
       validation: "float",
       required: true,
@@ -45,7 +45,7 @@ export const stoneAttributes = {
     {
       key: "quantity",
       label: "Quantity",
-      type: "number",
+      type: "text",
       placeholder: "1",
       validation: "integer",
       required: true,
@@ -61,7 +61,7 @@ export const stoneAttributes = {
     {
       key: "carat",
       label: "Carat",
-      type: "number",
+      type: "text",
       placeholder: "1.0",
       validation: "float",
       required: true,

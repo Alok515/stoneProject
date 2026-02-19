@@ -42,7 +42,7 @@ function submit() {
         v-for="field in schema"
         :key="field.key"
         :field="field"
-        v-model="form[field.key]"
+        v-model.trim="form[field.key]"
         :error="errors[field.key]"
       />
     </div>

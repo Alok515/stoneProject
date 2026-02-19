@@ -20,7 +20,7 @@ const edit = () => {
 <template>
   <div class="border rounded-xl p-4 flex justify-between items-center hover:cursor-pointer bg-white" @click.stop="edit">
     <div class="text-sm text-gray-700 font-semibold">
-      {{ stone.stoneType }}, {{ stone.quantity }}qty, {{ stone.shape }}, {{ stone.carat }}ct
+      {{ stone.stoneType }}, {{ stone.quantity }} qty, {{ stone.shape }}, {{ stone.carat }} ct
     </div>
 
     <button class="text-xs px-3 py-1 rounded-full text-gray-400 hover:text-black" @click.stop="remove">
