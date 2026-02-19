@@ -1,18 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [],
-  theme: {
+  ttheme: {
     extend: {
       colors: {
-        'brand-primary': '#222222',
-        'brand-secondary': '#4F4F4F',
-        'brand-light': '#BFBFBF',
-        'brand-border': '#E5E5E5',
-        'brand-danger': '#C5221F',
-        'brand-bg-light': '#F5F5F5',
+        primary: "#222222",
+        secondary: "#4F4F4F",
+        borderLight: "#E5E5E5",
+        danger: "#C5221F",
+        surface: "#F5F5F5",
       },
-      fontFamily: {
-        sans: ['Urbanist', 'sans-serif'],
+      borderRadius: {
+        xl2: "15px",
+      },
+      boxShadow: {
+        card: "0 4px 20px rgba(7,11,20,0.1)",
       },
     },
   },

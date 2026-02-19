@@ -1,0 +1,71 @@
+export const stoneAttributes = {
+  diamond: [
+    {
+      key: "stoneType",
+      label: "Stone Type",
+      type: "text",
+      default: "Diamond",
+      disabled: true,
+      required: true,
+    },
+    {
+      key: "quantity",
+      label: "Quantity",
+      type: "number",
+      placeholder: "1",
+      validation: "integer",
+      required: true,
+    },
+    {
+      key: "shape",
+      label: "Shape",
+      type: "select",
+      options: ["Round", "Princess", "Oval", "Marquise", "Pear", "Cushion", "Emerald", "Asscher", "Radiant", "Heart"],
+      placeholder: "Select Shape",
+      required: true,
+    },
+    {
+      key: "carat",
+      label: "Carat",
+      type: "number",
+      placeholder: "1.0",
+      validation: "float",
+      required: true,
+    },
+  ],
+  gemstone: [
+    {
+      key: "stoneType",
+      label: "Stone Type",
+      type: "select",
+      options: ["Ruby", "Sapphire", "Emerald", "Amethyst", "Aquamarine", "Garnet", "Peridot", "Topaz", "Tourmaline", "Opal", "Pearl", "Tanzanite"],
+      placeholder: "Select Stone",
+      required: true,
+    },
+    {
+      key: "quantity",
+      label: "Quantity",
+      type: "number",
+      placeholder: "1",
+      validation: "integer",
+      required: true,
+    },
+    {
+      key: "shape",
+      label: "Shape",
+      type: "select",
+      options: ["Round", "Oval", "Cushion", "Pear", "Marquise", "Emerald", "Princess", "Trillion"],
+      placeholder: "Select Shape",
+      required: true,
+    },
+    {
+      key: "carat",
+      label: "Carat",
+      type: "number",
+      placeholder: "1.0",
+      validation: "float",
+      required: true,
+    },
+    
+  ],
+};
