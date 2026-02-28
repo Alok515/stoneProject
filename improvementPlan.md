@@ -31,8 +31,6 @@ SET type = "diamond"   // can be "diamond" or "gemstone"
 SET currentPage = 1
 SET pageSize = 10
 
-SET paginatedData = empty list
-
 GET reference to mainStore (stone store)
 
 
@@ -51,11 +49,7 @@ DEFINE totalPages AS:
     RETURN ceiling(totalItems / pageSize)
 
 
------------------------
-CORE LOGIC
------------------------
-
-FUNCTION loadData():
+DEFINE paginatedData AS:
     IF type is "diamond"
         sourceList = mainStore.diamonds
     ELSE
@@ -64,27 +58,40 @@ FUNCTION loadData():
     startIndex = (currentPage - 1) * pageSize
     endIndex = startIndex + pageSize
 
-    paginatedData = slice of sourceList from startIndex to endIndex
+    //check for data overflow
+    IF startIndex > sourceList.length
+        //reset values
+        startIndex = 0
+        endIndex = pageSize
+
+    IF endIndex > sourceList.length
+        endIndex = sourceList.length
+
+
+    return slice of sourceList from startIndex to endIndex:
+
+
+
+-----------------------
+CORE LOGIC
+-----------------------
 
 
 FUNCTION next():
     IF currentPage < totalPages
         INCREMENT currentPage
         CALL persist()
-        CALL loadData()
 
 
 FUNCTION prev():
     IF currentPage > 1
         DECREMENT currentPage
         CALL persist()
-        CALL loadData()
 
 
 FUNCTION setType(newType):
     SET type = newType
     SET currentPage = 1
-    CALL loadData()
 
 
 -----------------------
@@ -108,10 +115,6 @@ FUNCTION hydrate():
     READ localStorage with key:
         "stone-pagination-" + type
 
-    IF nothing found
-        CALL loadData()
-        EXIT
-
     TRY:
         PARSE stored data
         SET currentPage = stored.currentPage OR 1
@@ -119,8 +122,6 @@ FUNCTION hydrate():
     CATCH error:
         SET currentPage = 1
         SET pageSize = 10
-
-    CALL loadData()
 
 
 -----------------------
@@ -136,5 +137,49 @@ Expose:
     next()
     prev()
     setType()
-    loadData()
     hydrate()
+
+
+USE IN COMPONENT
+-----------------------
+SETUP 
+
+props type = "diamond" // can be "diamond" or "gemstone"
+
+const { next, prev, setType, hydrate } = useStonePaginationStore()
+//reactive Data
+const { currentPage, totalPages, paginatedData } = storeToRefs(useStonePaginationStore())
+
+CALL setType(props.type)
+
+onMounted(() => {
+    //hydrate on mount
+    CALL hydrate()
+})
+
+Template UI:
+<div>
+    <section>
+    //header
+    <main v-for="item in paginatedData" :key="item.id">
+        <p>Type: {{ item.stoneType }}</p>
+        <p>Qty: {{ item.quantity }}</p>
+        <p>Carat: {{ item.carat }}</p>
+        <p>Shape: {{ item.shape }}</p>
+    </main>
+    <footer>
+        <p>Page {{ currentPage }} of {{ totalPages }}</p>
+        <button @click="prev">Prev</button>
+        <button @click="next">Next</button>
+    </footer>
+    </section>
+</div>
+
+
+USE IN PREVIEW:
+const types = ["diamond", "gemstone"]
+
+<template>
+    //page Header
+    <PAGECOMPONENT v-for="type in types" :key="type" :type="type" />
+</template
