@@ -39,17 +39,20 @@ COMPUTED VALUES
 -----------------------
 
 DEFINE totalItems AS:
+    ```
     IF type is "diamond"
         RETURN number of diamonds in mainStore
     ELSE
         RETURN number of gemstones in mainStore
+    ```
 
 
 DEFINE totalPages AS:
-    RETURN ceiling(totalItems / pageSize)
+   ``` RETURN ceiling(totalItems / pageSize) ```
 
 
 DEFINE paginatedData AS:
+    ```
     IF type is "diamond"
         sourceList = mainStore.diamonds
     ELSE
@@ -69,6 +72,7 @@ DEFINE paginatedData AS:
 
 
     return slice of sourceList from startIndex to endIndex:
+    ```
 
 
 
@@ -78,38 +82,38 @@ CORE LOGIC
 
 
 FUNCTION next():
-    IF currentPage < totalPages
+    ```IF currentPage < totalPages
         INCREMENT currentPage
         CALL persist()
-
+    ```
 
 FUNCTION prev():
-    IF currentPage > 1
+    ```IF currentPage > 1
         DECREMENT currentPage
         CALL persist()
-
+    ```
 
 FUNCTION setType(newType):
-    SET type = newType
+    ```SET type = newType
     SET currentPage = 1
-
+    ```
 
 -----------------------
 PERSISTENCE (LOCAL STORAGE)
 -----------------------
 
 FUNCTION persist():
-    IF running in browser
+    ```IF running in browser
         SAVE to localStorage using key:
             "stone-pagination-" + type
 
         STORE:
             currentPage
             pageSize
-
+```
 
 FUNCTION hydrate():
-    IF NOT running in browser // process.client
+    ```IF NOT running in browser // process.client
         EXIT
 
     READ localStorage with key:
@@ -122,14 +126,14 @@ FUNCTION hydrate():
     CATCH error:
         SET currentPage = 1
         SET pageSize = 10
-
+```
 
 -----------------------
 RETURN FROM STORE
 -----------------------
 
 Expose:
-    type
+   ``` type
     currentPage
     pageSize
     totalPages
@@ -138,7 +142,7 @@ Expose:
     prev()
     setType()
     hydrate()
-
+```
 
 USE IN COMPONENT
 -----------------------
