@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
 
 const store = useStoneStore();
 
@@ -56,7 +56,7 @@ function handleSave(data: any, type: "diamond" | "gemstone") {
     store.updateStone(data);
     store.clearEditing();
   } else {
-    data.id = uuid();
+    data.id = crypto.randomUUID();
     store.addStone(type, data);
     forms[type] = false;
   }
@@ -142,17 +142,17 @@ function goPreview() {
                   </div>
                 </div>
 
-                <LazyUIAddButton v-if="!section.isOpen && editing.type !== section.type"
+                <UIAddButton v-if="!section.isOpen && editing.type !== section.type"
                   class="!bg-[#F5F5F5] !text-black !px-6 !py-2.5 !text-sm !font-bold hover:!bg-gray-200 transition"
                   @click="openAdd(section.type)">
                   + Add {{ section.title }}
-                </LazyUIAddButton>
+                </UIAddButton>
 
               </div>
             </div>
 
             <div v-if="error" class="absolute -bottom-10 left-0">
-              <LazyUIErrorBoundary :error="error" />
+              <UIErrorBoundary :error="error" />
             </div>
 
           </div>

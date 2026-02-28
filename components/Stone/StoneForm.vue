@@ -48,7 +48,7 @@ function submit() {
     </div>
 
     <div class="flex gap-4 pt-4">
-      <LazyUIAddButton
+      <UIAddButton
         @click="submit"
         :disabled="schema.length === 0"
       />

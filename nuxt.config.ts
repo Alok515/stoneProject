@@ -9,9 +9,4 @@ export default defineNuxtConfig({
       appName: 'Stone Project'
     }
   },
-  vite: {
-    optimizeDeps: {
-      include: ['uuid']
-    }
-  }
 })
