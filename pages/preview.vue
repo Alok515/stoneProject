@@ -39,7 +39,7 @@ const { diamonds, gemstones } = useStoneStore()
             <p>Type: {{ g.stoneType }}</p>
             <p>Qty: {{ g.quantity }}</p>
             <p>Carat: {{ g.carat }}</p>
-            <p>Color: {{ g.shape }}</p>
+            <p>Shape: {{ g.shape }}</p>
           </div>
         </div>
 
