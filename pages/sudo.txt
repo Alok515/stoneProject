@@ -1,0 +1,24 @@
+key:dimond / gemstone
+
+//get data for that type
+
+//store for pageination
+fileds
+currentpage, pageSide, 
+methods
+data
+next , prev to get data chunks
+loadData //loads data from mainStore for the spcified chunds and has fall for 10 size.
+hydrate to setup data from localStore onMount
+
+here the currentPage and pageSide will presisteage to localStore
+
+
+componet
+
+uses this store
+
+onmounted hydrates localStoreData
+
+UI rendres data
+has button prev, next with method from store
