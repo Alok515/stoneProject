@@ -1,189 +1,169 @@
 # Stone Preview Pagination
 
-## Overview
+CREATE function useStonePaginationStore(typeKey)
 
-This document outlines the pagination architecture for the **Preview Page** of the Stone Editor application.
+    RETURN defineStore("stonePagination-" + typeKey, () => {
 
-# Architecture Overview
+        ---------------- STATE ----------------
 
-We separate concerns into:
-
-1. **Main Store (`useStoneStore`)**
-   - Holds domain data (diamonds, gemstones)
-
-2. **Pagination Store (`useStonePaginationStore`)**
-   - Handles slicing logic
-   - Maintains page state
-   - Persists page settings
-   - Hydrates safely on client
----
-
-# Pagination Store Design (Pseudo Code)
-
-CREATE store "stonePagination"
-
------------------------
-STATE
------------------------
-
-SET type = "diamond"   // can be "diamond" or "gemstone"
-
-SET currentPage = 1
-SET pageSize = 10
-
-GET reference to mainStore (stone store)
-
-
------------------------
-COMPUTED VALUES
------------------------
-
-DEFINE totalItems AS:
-    ```
-    IF type is "diamond"
-        RETURN number of diamonds in mainStore
-    ELSE
-        RETURN number of gemstones in mainStore
-    ```
-
-
-DEFINE totalPages AS:
-   ``` RETURN ceiling(totalItems / pageSize) ```
-
-
-DEFINE paginatedData AS:
-    ```
-    IF type is "diamond"
-        sourceList = mainStore.diamonds
-    ELSE
-        sourceList = mainStore.gemstones
-
-    startIndex = (currentPage - 1) * pageSize
-    endIndex = startIndex + pageSize
-
-    //check for data overflow
-    IF startIndex > sourceList.length
-        //reset values
-        startIndex = 0
-        endIndex = pageSize
-
-    IF endIndex > sourceList.length
-        endIndex = sourceList.length
-
-
-    return slice of sourceList from startIndex to endIndex:
-    ```
-
-
-
------------------------
-CORE LOGIC
------------------------
-
-
-FUNCTION next():
-    ```IF currentPage < totalPages
-        INCREMENT currentPage
-        CALL persist()
-    ```
-
-FUNCTION prev():
-    ```IF currentPage > 1
-        DECREMENT currentPage
-        CALL persist()
-    ```
-
-FUNCTION setType(newType):
-    ```SET type = newType
-    SET currentPage = 1
-    ```
-
------------------------
-PERSISTENCE (LOCAL STORAGE)
------------------------
-
-FUNCTION persist():
-    ```IF running in browser
-        SAVE to localStorage using key:
-            "stone-pagination-" + type
-
-        STORE:
-            currentPage
-            pageSize
-```
-
-FUNCTION hydrate():
-    ```IF NOT running in browser // process.client
-        EXIT
-
-    READ localStorage with key:
-        "stone-pagination-" + type
-
-    TRY:
-        PARSE stored data
-        SET currentPage = stored.currentPage OR 1
-        SET pageSize = stored.pageSize OR 10
-    CATCH error:
         SET currentPage = 1
         SET pageSize = 10
-```
 
------------------------
-RETURN FROM STORE
------------------------
+        GET reference to mainStore (useStoneStore)
 
-Expose:
-   ``` type
+
+        ---------------- DATA SOURCE ----------------
+
+        DEFINE sourceList AS:
+            IF typeKey == "diamond"
+                RETURN mainStore.diamonds
+            ELSE
+                RETURN mainStore.gemstones
+
+
+        ---------------- COMPUTED VALUES ----------------
+
+        DEFINE totalItems AS:
+            RETURN length of sourceList
+
+        DEFINE totalPages AS:
+            RETURN ceil(totalItems / pageSize)
+
+        DEFINE paginatedData AS:
+
+            start = (currentPage - 1) * pageSize
+            end = start + pageSize
+
+            IF start >= totalItems
+                SET currentPage = 1
+                RETURN first page slice
+
+            RETURN sourceList sliced from start to end
+
+
+        ---------------- METHODS ----------------
+
+        FUNCTION next():
+            IF currentPage < totalPages
+                INCREMENT currentPage
+                CALL persist()
+
+        FUNCTION prev():
+            IF currentPage > 1
+                DECREMENT currentPage
+                CALL persist()
+
+
+        ---------------- PERSISTENCE ----------------
+
+        FUNCTION persist():
+            IF running in browser
+                SAVE to localStorage with key:
+                    "stone-pagination-" + typeKey
+                STORE:
+                    currentPage
+                    pageSize
+
+        FUNCTION hydrate():
+            IF NOT running in browser
+                EXIT
+
+            READ localStorage using:
+                "stone-pagination-" + typeKey
+
+            IF no stored value
+                EXIT
+
+            TRY:
+                PARSE stored value
+                SET currentPage
+                SET pageSize
+            CATCH:
+                RESET to defaults
+
+
+        RETURN:
+            currentPage
+            pageSize
+            totalPages
+            paginatedData
+            next()
+            prev()
+            hydrate()
+
+    })
+
+
+DEFINE props:
+    type: "diamond" | "gemstone"
+
+CREATE paginationStore using:
+    useStonePaginationStore(props.type)
+
+EXTRACT:
     currentPage
-    pageSize
     totalPages
     paginatedData
     next()
     prev()
-    setType()
     hydrate()
-```
 
-USE IN COMPONENT
------------------------
-SETUP 
-
-props type = "diamond" // can be "diamond" or "gemstone"
-
-const { next, prev, setType, hydrate } = useStonePaginationStore()
-//reactive Data
-const { currentPage, totalPages, paginatedData } = storeToRefs(useStonePaginationStore())
-
-CALL setType(props.type)
-
-onMounted(() => {
-    //hydrate on mount
+ON component mounted:
     CALL hydrate()
-})
 
-Template UI:
-<div>
-    <section>
-    //header
-    <main v-for="item in paginatedData" :key="item.id">
-        <p>Type: {{ item.stoneType }}</p>
-        <p>Qty: {{ item.quantity }}</p>
-        <p>Carat: {{ item.carat }}</p>
-        <p>Shape: {{ item.shape }}</p>
-    </main>
-    <footer>
-        <p>Page {{ currentPage }} of {{ totalPages }}</p>
-        <button @click="prev">Prev</button>
-        <button @click="next">Next</button>
-    </footer>
-    </section>
-</div>
-
-
-USE IN PREVIEW:
-const types = ["diamond", "gemstone"]
 
 <template>
-    //page Header
-    <PAGECOMPONENT v-for="type in types" :key="type" :type="type" />
-</template
+  <section class="preview-section">
+
+    <!-- Stone List -->
+    <main
+      v-for="item in paginatedData"
+      :key="item.id"
+      class="stone-card"
+    >
+      <p>Type: {{ item.stoneType }}</p>
+      <p>Qty: {{ item.quantity }}</p>
+      <p>Carat: {{ item.carat }}</p>
+      <p>Shape: {{ item.shape }}</p>
+    </main>
+
+    <!-- Pagination Controls -->
+    <footer class="pagination-footer">
+
+      <p>
+        Page {{ currentPage }} of {{ totalPages }}
+      </p>
+
+      <button
+        :disabled="currentPage === 1"
+        @click="prev"
+      >
+        Prev
+      </button>
+
+      <button
+        :disabled="currentPage === totalPages"
+        @click="next"
+      >
+        Next
+      </button>
+
+    </footer>
+
+  </section>
+</template>
+
+Preview Page
+
+<script setup lang="ts">
+const types = ["diamond", "gemstone"] as const
+</script>
+
+```
+<template>
+  <StonePreviewSection
+    v-for="type in types"
+    :key="type"
+    :type="type"
+  />
+</template>
