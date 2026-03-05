@@ -32,6 +32,7 @@ export const stoneAttributes = {
       validation: "float",
       required: true,
       maxFloat: 200,
+      step: 0.01,
       slider: true,
     },
   ],
@@ -68,6 +69,7 @@ export const stoneAttributes = {
       validation: "float",
       required: true,
       maxFloat: 200,
+      step: 0.01,
       slider: true,
     },
     

@@ -21,20 +21,19 @@ const updateValue = (event: Event, type?: string) => {
 
 const handleFloatRange = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  console.log(target.value);
   emit("update:modelValue", target.value);
 }
 </script>
 
 <template>
   <div class="flex flex-col gap-1">
-    <div class="flex items-center gap-6">
-      <label class="w-[130px] text-sm font-medium">
+    <div class="flex items-start gap-6">
+      <label class="w-[130px] text-sm font-medium pt-2">
         {{ field.label }}<span v-if="field.required"> *</span>
       </label>
 
       <select v-if="field.type === 'select'" :value="modelValue" @change="updateValue" :disabled="field.disabled"
-        class="flex-1 border rounded px-3 py-2 w-full bg-white" :class="{ 'border-red-500': error }">
+        class="flex-1 border rounded px-3 py-2 w-full bg-white min-h-[42px]" :class="{ 'border-red-500': error }">
         <option v-if="field.placeholder" value="" disabled selected>
           {{ field.placeholder }}
         </option>
@@ -43,13 +42,25 @@ const handleFloatRange = (event: Event) => {
         </option>
       </select>
 
-      <div v-else class="flex flex-col gap-1">
+      <div v-else class="flex-1 w-full flex flex-col gap-2">
         <input :type="field.type" :disabled="field.disabled" :value="modelValue"
         @input="(e) => updateValue(e, field?.validation || 'integer')"
-        class="flex-1 border rounded px-3 py-2 w-full bg-white" :class="{ 'border-red-500': error }"
+        class="border rounded px-3 py-2 w-full bg-white min-h-[42px]" :class="{ 'border-red-500': error }"
         :placeholder="field.placeholder" />
 
-      <input type="range" v-if="field?.slider" :max="field.maxFloat" @change="(e) => handleFloatRange(e)" min="0"/>
+      <div v-if="field?.slider" class="flex items-center gap-3">
+        <input
+          type="range"
+          class="w-full accent-black"
+          :value="modelValue || 0"
+          :max="field.maxFloat || 200"
+          :step="field?.validation === 'float' ? field?.step || 0.01 : 1"
+          min="0"
+          :disabled="field.disabled"
+          @input="handleFloatRange"
+        />
+        <span class="w-12 text-xs text-right text-gray-500 tabular-nums">{{ modelValue || 0 }}</span>
+      </div>
       </div>
     </div>
     <span v-if="error" class="text-xs text-red-500 text-left block">
