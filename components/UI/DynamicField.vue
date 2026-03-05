@@ -7,7 +7,7 @@ defineProps<{
 
 const emit = defineEmits(["update:modelValue"]);
 
-const updateValue = (event: Event, type?: string) => {
+const updateValue = (event: Event, type?: string, fieldKey?: string) => {
   const target = event.target as HTMLInputElement | HTMLSelectElement;
   if (type === 'integer' || type === 'float' || type === 'number') {
     target.value = target.value
@@ -15,6 +15,11 @@ const updateValue = (event: Event, type?: string) => {
       .replace(/(\..*?)\..*/g, "$1")
       .replace(/^0+(\d)/, "$1")
       .replace(/^\./, "0.");
+
+    if (fieldKey === "carat" && type === "float") {
+      const [whole, decimal] = target.value.split(".");
+      target.value = decimal !== undefined ? `${whole}.${decimal.slice(0, 2)}` : whole;
+    }
   };
   emit("update:modelValue", target.value);
 };
@@ -44,7 +49,7 @@ const handleFloatRange = (event: Event) => {
 
       <div v-else class="flex-1 w-full flex flex-col gap-2">
         <input :type="field.type" :disabled="field.disabled" :value="modelValue"
-        @input="(e) => updateValue(e, field?.validation || 'integer')"
+        @input="(e) => updateValue(e, field?.validation || 'integer', field?.key)"
         class="border rounded px-3 py-2 w-full bg-white min-h-[42px]" :class="{ 'border-red-500': error }"
         :placeholder="field.placeholder" />
 
