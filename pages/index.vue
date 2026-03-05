@@ -152,7 +152,13 @@ function goPreview() {
             </div>
 
             <div v-if="error" class="absolute -bottom-10 left-0">
-              <UIErrorBoundary :error="error" />
+              <UIErrorBoundary :error="error">
+                <template #error="{ error: boundaryError }">
+                  <div class="w-full mt-4 pb-4">
+                    <span class="text-red-500 font-bold">{{ boundaryError }}</span>
+                  </div>
+                </template>
+              </UIErrorBoundary>
             </div>
 
           </div>

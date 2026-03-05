@@ -37,15 +37,20 @@ function submit() {
       Loading...
     </div>
 
-    <div v-else class="space-y-4">
-      <LazyUIDynamicField
-        v-for="field in schema"
-        :key="field.key"
-        :field="field"
-        v-model.trim="form[field.key]"
-        :error="errors[field.key]"
-      />
-    </div>
+    <UIErrorBoundary
+      v-else
+      fallback-message="Form failed to render. Please close and reopen."
+    >
+      <div class="space-y-4">
+        <LazyUIDynamicField
+          v-for="field in schema"
+          :key="field.key"
+          :field="field"
+          v-model.trim="form[field.key]"
+          :error="errors[field.key]"
+        />
+      </div>
+    </UIErrorBoundary>
 
     <div class="flex gap-4 pt-4">
       <UIAddButton
