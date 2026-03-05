@@ -18,6 +18,12 @@ const updateValue = (event: Event, type?: string) => {
   };
   emit("update:modelValue", target.value);
 };
+
+const handleFloatRange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  console.log(target.value);
+  emit("update:modelValue", target.value);
+}
 </script>
 
 <template>
@@ -37,10 +43,14 @@ const updateValue = (event: Event, type?: string) => {
         </option>
       </select>
 
-      <input v-else :type="field.type" :disabled="field.disabled" :value="modelValue"
+      <div v-else class="flex flex-col gap-1">
+        <input :type="field.type" :disabled="field.disabled" :value="modelValue"
         @input="(e) => updateValue(e, field?.validation || 'integer')"
         class="flex-1 border rounded px-3 py-2 w-full bg-white" :class="{ 'border-red-500': error }"
         :placeholder="field.placeholder" />
+
+      <input type="range" v-if="field?.slider" :max="field.maxFloat" @change="(e) => handleFloatRange(e)" min="0"/>
+      </div>
     </div>
     <span v-if="error" class="text-xs text-red-500 text-left block">
       {{ error }}

@@ -31,6 +31,8 @@ export const stoneAttributes = {
       placeholder: "1.0",
       validation: "float",
       required: true,
+      maxFloat: 200,
+      slider: true,
     },
   ],
   gemstone: [
@@ -65,6 +67,8 @@ export const stoneAttributes = {
       placeholder: "1.0",
       validation: "float",
       required: true,
+      maxFloat: 200,
+      slider: true,
     },
     
   ],
